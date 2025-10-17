@@ -27,7 +27,6 @@ htmlcov/
 
 # Environments
 .env
-.env.*
 
 # IDEs
 .vscode/
