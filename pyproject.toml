@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "todolist"
+version = "0.1.0"
+description = "Phase 1: ToDoList CLI application with in-memory storage"
+authors = ["Sam Ghorbani <https://sami-gh05.github.io/personal-portfolio-website/>"]
+readme = "README.md"
+packages = [{ include = "todolist" }]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.15"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+
+[tool.poetry.scripts]
+todolist = "todolist.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
