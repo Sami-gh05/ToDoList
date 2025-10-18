@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, date
 from typing import Optional
 
+from todolist.core.domain.project import Project
 from todolist.core.domain.status import TaskStatus
 from todolist.config.settings import Settings
 
@@ -15,7 +16,7 @@ class Task:
     parts are handled in repository and service layer."""
     
     id: int
-    project_id: int
+    project_ref: Project
     name: str
     description: str = ""
     status: TaskStatus = field(default = TaskStatus.TODO)
