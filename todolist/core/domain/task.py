@@ -15,6 +15,7 @@ class Task:
     parts are handled in repository and service layer."""
     
     id: int
+    project_id: int
     name: str
     description: str = ""
     status: TaskStatus = field(default = TaskStatus.TODO)
