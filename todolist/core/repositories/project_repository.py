@@ -31,3 +31,7 @@ class ProjectRepository(ABC):
     @abstractmethod
     def list_all_projects(self) -> Iterable[Project]:
         raise NotImplementedError
+    
+    @abstractmethod
+    def update(self, project: Project) -> Project:
+        raise NotImplementedError
