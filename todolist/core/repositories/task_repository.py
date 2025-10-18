@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Iterable, Optional, Union
+from typing import Iterable, Optional
 
 from todolist.core.domain.task import Task
 
@@ -25,12 +25,12 @@ class TaskRepository(ABC):
         raise NotImplementedError
     
     @abstractmethod
-    def list_by_project(self, project_identifier: Union[int, str]) -> Iterable[Task]:
+    def list_by_project(self, project_id: int) -> Iterable[Task]:
         """List tasks by project name or id"""
         raise NotImplementedError
     
     @abstractmethod
-    def remove_by_project(self, project_identifier: Union[int, str]) -> int:
+    def remove_by_project(self, project_id: int) -> int:
         """Remove all tasks by project name or id; return count removed"""
         raise NotImplementedError
     

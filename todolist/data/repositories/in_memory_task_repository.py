@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import DefaultDict, Dict, List, Iterable, Optional, Union
+from typing import DefaultDict, Dict, List, Iterable, Optional
 
 from todolist.core.domain.task import Task
 from todolist.core.repositories.task_repository import TaskRepository
