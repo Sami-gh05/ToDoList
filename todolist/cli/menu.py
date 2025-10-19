@@ -7,20 +7,18 @@ from todolist.core.domain.status import TaskStatus
 from todolist.core.services.project_service import ProjectService, UpdateProject
 from todolist.core.services.task_service import TaskService, UpdateTask
 
-
-project_service: ProjectService
-task_service: TaskService
-project_update: UpdateProject
-task_update: UpdateTask
-
 def run_menu(project_service: ProjectService, task_service: TaskService) -> None:
+    # Create update objects
+    project_update = UpdateProject(project_service.project_repo)
+    task_update = UpdateTask(task_service.task_repo)
+    
     actions = {
         "1": ("Create project", lambda: _create_project(project_service)),
-        "2": ("Edit project", lambda: _run_edit_project_menu(project_update)),
+        "2": ("Edit project", lambda: _run_edit_project_menu(project_service, task_service, project_update)),
         "3": ("Delete project", lambda: _delete_project(project_service)),
         "4": ("List projects", lambda: _list_projects(project_service)),
         "5": ("Add task", lambda: _add_task(task_service)),
-        "6": ("Edit task", lambda: _run_edit_task_menu(task_update)),
+        "6": ("Edit task", lambda: _run_edit_task_menu(project_service, task_service, task_update)),
         "7": ("Delete task", lambda: _delete_task(task_service)),
         "8": ("List tasks by project", lambda: _list_tasks(task_service)),
         "0": ("Exit", None),
@@ -46,27 +44,28 @@ def run_menu(project_service: ProjectService, task_service: TaskService) -> None
             print(f"Error: {exc}")
 
 
-def _run_edit_project_menu(project_update: UpdateProject) -> None:
+def _run_edit_project_menu(project_service: ProjectService, task_service: TaskService, project_update: UpdateProject) -> None:
     print("Edit project:")
     project_edit_actions = {
         "1": ("Edit name", lambda: _edit_project_name(project_update)),
         "2": ("Edit description", lambda: _edit_project_description(project_update)),
-        "0": ("Back", lambda: run_menu(project_service, task_service))
+        "0": ("Back", None)
     }
     
-    while(True):
+    while True:
         for key, (label, _) in project_edit_actions.items():
             print(f"  {key}. {label}")
         choice = input("> ").strip()
+        
         if choice == "0":
-            run_menu(project_service, task_service)
-
+            break
+            
         action = project_edit_actions.get(choice)
         if not action:
             print("Invalid choice.")
             continue
         try:
-            handler = project_edit_actions[1]
+            handler = action[1]
             if handler:
                 handler()
         except Exception as exc:
@@ -82,7 +81,7 @@ def _edit_project_name(project_update: UpdateProject) -> None:
     
 def _edit_project_description(project_update: UpdateProject) -> None:
     pid = int(input("Project id: "))
-    description = input("New description: ") or None
+    description = input("New description: ")
     proj = project_update.edit_project_description(pid, description = description)
     print(f"Updated project #{proj.id}.")
     
@@ -110,29 +109,30 @@ def _list_projects(project_service: ProjectService) -> None:
         print(f"- #{p.id} {p.name}: {p.description}")  
   
         
-def _run_edit_task_menu(task_update: UpdateTask) -> None:
+def _run_edit_task_menu(project_service: ProjectService, task_service: TaskService, task_update: UpdateTask) -> None:
     print("Edit task:")
     task_edit_actions = {
         "1": ("Edit name", lambda: _edit_task_name(task_update)),
         "2": ("Edit description", lambda: _edit_task_description(task_update)),
         "3": ("Edit status[todo|doing|done]:", lambda: _change_task_status(task_update)),
         "4": ("Edit deadline (YYYY-MM-DD):", lambda: _edit_task_deadline(task_update)),
-        "0": ("Back", lambda: run_menu(project_service, task_service))
+        "0": ("Back", None)
     }
     
-    while(True):
+    while True:
         for key, (label, _) in task_edit_actions.items():
             print(f"  {key}. {label}")
         choice = input("> ").strip()
+        
         if choice == "0":
-            run_menu(project_service, task_service)
-
+            break
+            
         action = task_edit_actions.get(choice)
         if not action:
             print("Invalid choice.")
             continue
         try:
-            handler = task_edit_actions[1]
+            handler = action[1]
             if handler:
                 handler()
         except Exception as exc:
@@ -171,7 +171,7 @@ def _edit_task_deadline(task_update: UpdateTask) -> None:
 
 def _add_task(task_service: TaskService) -> None:
     pid = int(input("Project id: "))
-    title = input("Task title: ")
+    name = input("Task name: ")
     description = input("Task description: ")
     status_str = input("Status [todo|doing|done] (default todo): ").strip() or "todo"
     deadline_str = input("Deadline (YYYY-MM-DD, optional): ").strip()
@@ -180,8 +180,8 @@ def _add_task(task_service: TaskService) -> None:
         deadline = datetime.strptime(deadline_str, "%Y-%m-%d").date()
     task = task_service.add_task(
         pid,
-        title=title,
-        description=description,
+        name = name,
+        description = description,
         status=TaskStatus.from_string(status_str),
         deadline=deadline,
     )
@@ -207,6 +207,6 @@ def _list_tasks(task_service: TaskService) -> None:
     print("Tasks:")
     for t in tasks:
         deadline = t.deadline.isoformat() if t.deadline else "-"
-        print(f"- #{t.id} {t.title} [{t.status.value}] due {deadline}")
+        print(f"- #{t.id} {t.name} [{t.status.value}] due {deadline}")
 
 
