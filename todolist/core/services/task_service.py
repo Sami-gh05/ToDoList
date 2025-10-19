@@ -2,13 +2,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 from todolist.config.settings import Settings
 from todolist.core.domain.status import TaskStatus
 from todolist.core.domain.task import Task
+from todolist.core.domain.project import Project
 from todolist.core.repositories.project_repository import ProjectRepository
 from todolist.core.repositories.task_repository import TaskRepository
+
+def can_cast_to_int(s: Union[str, int]) -> bool:
+    try:
+        int(s)
+        return True
+    except (ValueError, TypeError):
+        return False
 
 @dataclass
 class TaskService:
@@ -20,22 +28,27 @@ class TaskService:
     
     def add_task(
         self,
-        project_id: int,
+        project_identifier: Union[str, int],
         *,
         name: str,
         description: str = "",
         status: TaskStatus = TaskStatus.TODO,
         deadline: Optional[date] = None
     ) -> Task:
-        if self.project_repo.get_by_id(project_id) is None:
+        project: Project
+        if can_cast_to_int(project_identifier):
+            project = self.project_repo.get_by_id(int(project_identifier))
+        else:
+            project = self.project_repo.get_by_name(project_identifier)
+        if project is None:
             raise ValueError("Project not found.")
-        task_count: int = len(list(self.task_repo.list_by_project(project_id)))
+        task_count: int = len(list(self.task_repo.list_by_project(project.id)))
         if task_count == self.settings.MAX_TASKS:
             raise ValueError("You have reached maximum number of tasks per project.")
         
         task = Task(
             id = self.task_repo.next_available_id(),
-            project_id = project_id,
+            project_id = project.id,
             name = name,
             description = description,
             status = status,
@@ -47,10 +60,15 @@ class TaskService:
     def delete_task(self, task_id: int) -> bool:
         return self.task_repo.remove(task_id)
     
-    def list_tasks_by_project(self, project_id: int) -> Iterable[Task]:
-        if self.project_repo.get_by_id(project_id) is None:
+    def list_tasks_by_project(self, project_identifier: Union[str, int]) -> Iterable[Task]:
+        project: Project
+        if can_cast_to_int(project_identifier):
+            project = self.project_repo.get_by_id(int(project_identifier))
+        else:
+            project = self.project_repo.get_by_name(project_identifier)
+        if project is None:
             raise ValueError("Project not found.")
-        tasks: list = list(self.task_repo.list_by_project(project_id))
+        tasks: list = list(self.task_repo.list_by_project(project.id))
         return tasks
     
 @dataclass

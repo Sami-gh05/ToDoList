@@ -8,6 +8,13 @@ from todolist.core.domain.project import Project
 from todolist.core.repositories.project_repository import ProjectRepository
 from todolist.core.repositories.task_repository import TaskRepository
 
+def can_cast_to_int(s: Union[str, int]) -> bool:
+    try:
+        int(s)
+        return True
+    except (ValueError, TypeError):
+        return False
+
 @dataclass
 class ProjectService:
     """Service for managing projects and enforcing business rules
@@ -24,6 +31,8 @@ class ProjectService:
     settings: Settings
     
     def create_project(self, name: str, description: str = "") -> Project:
+        if can_cast_to_int(name):
+            raise ValueError("Project name cannot be just numbers.")
         if self.project_repo.get_by_name(name) is not None:
             raise ValueError("Project name must be unique.")
         existing_count: int = len(list(self.project_repo.list_all_projects()))
@@ -34,14 +43,14 @@ class ProjectService:
     
     def delete_project(self, project_identifier: Union[int, str]) -> bool:
         project: Project
-        if isinstance(project_identifier, int):
-            project = self.project_repo.get_by_id(project_identifier)
-        elif isinstance(project_identifier, str):
+        if can_cast_to_int(project_identifier):
+            project = self.project_repo.get_by_id(int(project_identifier))
+        else:
             project = self.project_repo.get_by_name(project_identifier)
         if project is None:
             return False
         # Cascade deleting tasks
-        self.task_repo.remove_by_project(project.id)
+        self.task_rep.remove_by_project(project.id)
         return self.project_repo.remove(project.id)
     
     def list_projects(self) -> Iterable[Project]:
@@ -54,8 +63,12 @@ class UpdateProject:
     
     project_repo: ProjectRepository
     
-    def edit_project_name(self, project_id: int, *, name: str) -> Project:
-        project: Project = self.project_repo.get_by_id(project_id)
+    def edit_project_name(self, project_identifier: Union[int, str], *, name: str) -> Project:
+        project: Project
+        if can_cast_to_int(project_identifier):
+            project = self.project_repo.get_by_id(int(project_identifier))
+        else:
+            project = self.project_repo.get_by_name(project_identifier)
         if project is None:
             raise ValueError("Project not found.")
         if not name or len(name.strip()) == 0:
@@ -68,8 +81,12 @@ class UpdateProject:
         project.name = name
         return self.project_repo.update(project)
     
-    def edit_project_description(self, project_id: int,  *, description: str) -> Project:
-        project: Project = self.project_repo.get_by_id(project_id)
+    def edit_project_description(self, project_identifier: Union[int, str],  *, description: str) -> Project:
+        project: Project
+        if can_cast_to_int(project_identifier):
+            project = self.project_repo.get_by_id(int(project_identifier))
+        else:
+            project = self.project_repo.get_by_name(project_identifier)
         if project is None:
             raise ValueError("Project not found.")
         if len(description) > Settings.MAX_DESCRIPTION_LEN:

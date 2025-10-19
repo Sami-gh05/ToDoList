@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Callable
+from typing import Union
 
 from todolist.core.domain.status import TaskStatus
 from todolist.core.services.project_service import ProjectService, UpdateProject
@@ -73,14 +73,14 @@ def _run_edit_project_menu(project_service: ProjectService, task_service: TaskSe
   
     
 def _edit_project_name(project_update: UpdateProject) -> None:
-    pid = int(input("Project id: "))
+    pid: Union[str, int] = input("Project id or name: ")
     name = input("New name: ") or None
     proj = project_update.edit_project_name(pid, name=name)
     print(f"Updated project #{proj.id}.")
   
     
 def _edit_project_description(project_update: UpdateProject) -> None:
-    pid = int(input("Project id: "))
+    pid: Union[str, int] = input("Project id or name: ")
     description = input("New description: ")
     proj = project_update.edit_project_description(pid, description = description)
     print(f"Updated project #{proj.id}.")
@@ -94,8 +94,8 @@ def _create_project(project_service: ProjectService) -> None:
 
 
 def _delete_project(project_service: ProjectService) -> None:
-    pid = int(input("Project id: "))
-    ok = project_service.delete_project(pid)
+    pid: Union[str, int] = input("Project id or name: ")
+    ok: bool = project_service.delete_project(pid)
     print("Deleted." if ok else "Project not found.")
 
 
@@ -170,7 +170,7 @@ def _edit_task_deadline(task_update: UpdateTask) -> None:
 
 
 def _add_task(task_service: TaskService) -> None:
-    pid = int(input("Project id: "))
+    pid: Union[str, int] = input("Project id or name: ")
     name = input("Task name: ")
     description = input("Task description: ")
     status_str = input("Status [todo|doing|done] (default todo): ").strip() or "todo"
@@ -195,10 +195,10 @@ def _delete_task(task_service: TaskService) -> None:
 
 
 def _list_tasks(task_service: TaskService) -> None:
-    pid = int(input("Project id: "))
+    pid: Union[str, int] = input("Project id or name: ")
     try:
         tasks = list(task_service.list_tasks_by_project(pid))
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         print(f"Error: {exc}")
         return
     if not tasks:
@@ -207,6 +207,6 @@ def _list_tasks(task_service: TaskService) -> None:
     print("Tasks:")
     for t in tasks:
         deadline = t.deadline.isoformat() if t.deadline else "-"
-        print(f"- #{t.id} {t.name} [{t.status.value}] due {deadline}")
+        print(f"- #{t.id} {t.name}: {t.description} [{t.status.value}] due {deadline}")
 
 
