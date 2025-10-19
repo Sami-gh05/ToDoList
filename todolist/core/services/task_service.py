@@ -29,7 +29,6 @@ class TaskService:
     ) -> Task:
         if self.project_repo.get_by_id(project_id) is None:
             raise ValueError("Project not found.")
-        
         task_count: int = len(list(self.task_repo.list_by_project(project_id)))
         if task_count == self.settings.MAX_TASKS:
             raise ValueError("You have reached maximum number of tasks per project.")
@@ -51,52 +50,46 @@ class TaskService:
     def list_tasks_by_project(self, project_id: int) -> Iterable[Task]:
         if self.project_repo.get_by_id(project_id) is None:
             raise ValueError("Project not found.")
-        
         tasks: list = list(self.task_repo.list_by_project(project_id))
         return tasks
     
-    @dataclass
-    class UpdateTask:
-        """This class handles update procedure for different features of tasks"""
+@dataclass
+class UpdateTask:
+    """This class handles update procedure for different features of tasks"""
         
-        task_repo: TaskRepository
+    task_repo: TaskRepository
         
-        def edit_task_name(self, task_id: int, *, name: str) -> Task:
-            task: Task = self.task_repo.get_by_id(task_id)
-            if task is None:
-                raise ValueError("No Task found.")
-            
-            if not name or len(name.strip()) == 0:
-                raise ValueError("Task name cannot be empty")
-            
-            if len(name) > Settings.MAX_NAME_LEN:
-                raise ValueError(f"Length of task name cannot be more than {Settings.MAX_NAME_LEN} characters.")
-            task.name = name
-            return self.task_repo.update(task)
+    def edit_task_name(self, task_id: int, *, name: str) -> Task:
+        task: Task = self.task_repo.get_by_id(task_id)
+        if task is None:
+           raise ValueError("No Task found.")    
+        if not name or len(name.strip()) == 0:
+            raise ValueError("Task name cannot be empty")   
+        if len(name) > Settings.MAX_NAME_LEN:
+            raise ValueError(f"Length of task name cannot be more than {Settings.MAX_NAME_LEN} characters.")
+        task.name = name
+        return self.task_repo.update(task)
         
-        def edit_task_description(self, task_id, *, description: str) -> Task:
-            task: Task = self.task_repo.get_by_id(task_id)
-            if task is None:
-                raise ValueError("No Task found.")
-            
-            if len(description) > Settings.MAX_DESCRIPTION_LEN:
-                raise ValueError(f"Length of task description cannot be more than {Settings.MAX_DESCRIPTION_LEN} characters.")
-            task.description = description            
-            return self.task_repo.update(task)
+    def edit_task_description(self, task_id, *, description: str) -> Task:
+        task: Task = self.task_repo.get_by_id(task_id)
+        if task is None:
+            raise ValueError("No Task found.")    
+        if len(description) > Settings.MAX_DESCRIPTION_LEN:
+            raise ValueError(f"Length of task description cannot be more than {Settings.MAX_DESCRIPTION_LEN} characters.")
+        task.description = description            
+        return self.task_repo.update(task)
         
-        def edit_task_deadline(self, task_id, *, deadline: date) -> Task:
-            task: Task = self.task_repo.get_by_id(task_id)
-            if task is None:
-                raise ValueError("No Task found.")
-            
-            task.deadline = deadline           
-            return self.task_repo.update(task)
+    def edit_task_deadline(self, task_id, *, deadline: date) -> Task:
+        task: Task = self.task_repo.get_by_id(task_id)
+        if task is None:
+            raise ValueError("No Task found.")    
+        task.deadline = deadline           
+        return self.task_repo.update(task)
         
-        def change_status(self, task_id: int, status: TaskStatus) -> Task:
-            task: Task = self.task_repo.get_by_id(task_id)
-            if task is None:
-                raise ValueError("No Task found.")
-            
-            task.status = status
-            return self.task_repo.update(task)
+    def change_status(self, task_id: int, status: TaskStatus) -> Task:
+        task: Task = self.task_repo.get_by_id(task_id)
+        if task is None:
+            raise ValueError("No Task found.")            
+        task.status = status
+        return self.task_repo.update(task)
         
