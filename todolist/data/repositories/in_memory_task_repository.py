@@ -10,7 +10,7 @@ class InMemoryTaskRepository(TaskRepository):
     
     def __init__(self) -> None:
         self._tasks: Dict[int, Task] = {}
-        self._by_project_id: DefaultDict[int, List[int]] = defaultdict(List)
+        self._by_project_id: DefaultDict[int, List[int]] = defaultdict(list)
         self._next_available_id: int = 1
         
     def next_available_id(self) -> int:
@@ -26,7 +26,7 @@ class InMemoryTaskRepository(TaskRepository):
     
     def remove(self, task_id: int) -> bool:
         task = self._tasks.pop(task_id, None)
-        if Task is None:
+        if task is None:
             return False
         
         if task_id in self._by_project_id.get(task.project_id, []):

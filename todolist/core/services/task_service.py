@@ -70,7 +70,7 @@ class UpdateTask:
         task.name = name
         return self.task_repo.update(task)
         
-    def edit_task_description(self, task_id, *, description: str) -> Task:
+    def edit_task_description(self, task_id: int, *, description: str) -> Task:
         task: Task = self.task_repo.get_by_id(task_id)
         if task is None:
             raise ValueError("No Task found.")    
@@ -79,7 +79,7 @@ class UpdateTask:
         task.description = description            
         return self.task_repo.update(task)
         
-    def edit_task_deadline(self, task_id, *, deadline: date) -> Task:
+    def edit_task_deadline(self, task_id: int, *, deadline: date) -> Task:
         task: Task = self.task_repo.get_by_id(task_id)
         if task is None:
             raise ValueError("No Task found.")    

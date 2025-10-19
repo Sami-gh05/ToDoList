@@ -15,7 +15,7 @@ class InMemoryProjectRepository(ProjectRepository):
         
     def next_available_id(self) -> int:
         new_id = self._next_available_id
-        self.next_available_id += 1
+        self._next_available_id += 1
         return new_id
     
     def add(self, project: Project) -> Project:
@@ -47,5 +47,5 @@ class InMemoryProjectRepository(ProjectRepository):
         if project.id not in self._projects:
             raise ValueError("Project not found.")
         self._projects[project.id] = project
-        self._name_index[project.name] = project
+        self._name_index[project.name.lower()] = project.id
         return project

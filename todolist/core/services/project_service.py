@@ -23,10 +23,10 @@ class ProjectService:
     task_rep: TaskRepository
     settings: Settings
     
-    def creat_project(self, name: str, description: str = "") -> Project:
+    def create_project(self, name: str, description: str = "") -> Project:
         if self.project_repo.get_by_name(name) is not None:
             raise ValueError("Project name must be unique.")
-        existing_count: int = len(list(self.project_repo.list_all_projects))
+        existing_count: int = len(list(self.project_repo.list_all_projects()))
         if existing_count == self.settings.MAX_PROJECTS:
             raise ValueError("You have reached maximum number of projects.")
         project = Project(id = self.project_repo.next_available_id(), name = name, description = description)
@@ -75,6 +75,6 @@ class UpdateProject:
         if len(description) > Settings.MAX_DESCRIPTION_LEN:
             raise ValueError(f"Length of project description cannot be more than {Settings.MAX_DESCRIPTION_LEN} characters.")
         project.description = description
-        return self.project_repo.update(Project)
+        return self.project_repo.update(project)
     
     
