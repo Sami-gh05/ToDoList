@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import date
 from typing import Iterable, Optional, Union
 
@@ -18,13 +17,14 @@ def can_cast_to_int(s: Union[str, int]) -> bool:
     except (ValueError, TypeError):
         return False
 
-@dataclass
+
 class TaskService:
     """Service for managing tasks whithin a project context."""
     
-    task_repo: TaskRepository
-    project_repo: ProjectRepository
-    settings: Settings
+    def __init__(self, task_repo: TaskRepository, project_repo: ProjectRepository, settings: Settings) -> None:
+        self.task_repo = task_repo
+        self.project_repo = project_repo
+        self.settings = settings
     
     def add_task(
         self,
@@ -54,7 +54,6 @@ class TaskService:
             status = status,
             deadline = deadline
         )
-        task.validate()
         return self.task_repo.add(task)
     
     def delete_task(self, task_id: int) -> bool:
@@ -71,12 +70,6 @@ class TaskService:
         tasks: list = list(self.task_repo.list_by_project(project.id))
         return tasks
     
-@dataclass
-class UpdateTask:
-    """This class handles update procedure for different features of tasks"""
-        
-    task_repo: TaskRepository
-        
     def edit_task_name(self, task_id: int, *, name: str) -> Task:
         task: Task = self.task_repo.get_by_id(task_id)
         if task is None:
@@ -100,7 +93,7 @@ class UpdateTask:
     def edit_task_deadline(self, task_id: int, *, deadline: date) -> Task:
         task: Task = self.task_repo.get_by_id(task_id)
         if task is None:
-            raise ValueError("No Task found.")    
+            raise ValueError("No Task found.")            
         task.deadline = deadline           
         return self.task_repo.update(task)
         

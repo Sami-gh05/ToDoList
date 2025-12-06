@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Iterable, Optional, Union
 
 from todolist.config.settings import Settings
@@ -15,7 +14,6 @@ def can_cast_to_int(s: Union[str, int]) -> bool:
     except (ValueError, TypeError):
         return False
 
-@dataclass
 class ProjectService:
     """Service for managing projects and enforcing business rules
     
@@ -25,11 +23,12 @@ class ProjectService:
     - Enforce MAX_NUMBER_OF_PROJECT limit
     - Cascade delete tasks when a project is removed
     """
-    
-    project_repo: ProjectRepository
-    task_rep: TaskRepository
-    settings: Settings
-    
+
+    def __init__(self, project_repo: ProjectRepository, task_rep: TaskRepository, settings: Settings) -> None:
+        self.project_repo = project_repo
+        self.task_rep = task_rep
+        self.settings = settings
+        
     def create_project(self, name: str, description: str = "") -> Project:
         if can_cast_to_int(name):
             raise ValueError("Project name cannot be just numbers.")
@@ -56,12 +55,6 @@ class ProjectService:
     def list_projects(self) -> Iterable[Project]:
         projects: list = list(self.project_repo.list_all_projects())
         return projects
-    
-@dataclass  
-class UpdateProject:
-    """This class handles update procedure for different features of projects"""
-    
-    project_repo: ProjectRepository
     
     def edit_project_name(self, project_identifier: Union[int, str], *, name: str) -> Project:
         project: Project

@@ -4,21 +4,17 @@ from datetime import datetime
 from typing import Union
 
 from todolist.core.domain.status import TaskStatus
-from todolist.core.services.project_service import ProjectService, UpdateProject
-from todolist.core.services.task_service import TaskService, UpdateTask
+from todolist.core.services.project_service import ProjectService
+from todolist.core.services.task_service import TaskService
 
 def run_menu(project_service: ProjectService, task_service: TaskService) -> None:
-    # Create update objects
-    project_update = UpdateProject(project_service.project_repo)
-    task_update = UpdateTask(task_service.task_repo)
-    
     actions = {
         "1": ("Create project", lambda: _create_project(project_service)),
-        "2": ("Edit project", lambda: _run_edit_project_menu(project_service, task_service, project_update)),
+        "2": ("Edit project", lambda: _run_edit_project_menu(project_service)),
         "3": ("Delete project", lambda: _delete_project(project_service)),
         "4": ("List projects", lambda: _list_projects(project_service)),
         "5": ("Add task", lambda: _add_task(task_service)),
-        "6": ("Edit task", lambda: _run_edit_task_menu(project_service, task_service, task_update)),
+        "6": ("Edit task", lambda: _run_edit_task_menu(task_service)),
         "7": ("Delete task", lambda: _delete_task(task_service)),
         "8": ("List tasks by project", lambda: _list_tasks(task_service)),
         "0": ("Exit", None),
@@ -44,11 +40,11 @@ def run_menu(project_service: ProjectService, task_service: TaskService) -> None
             print(f"Error: {exc}")
 
 
-def _run_edit_project_menu(project_service: ProjectService, task_service: TaskService, project_update: UpdateProject) -> None:
+def _run_edit_project_menu(project_service: ProjectService) -> None:
     print("Edit project:")
     project_edit_actions = {
-        "1": ("Edit name", lambda: _edit_project_name(project_update)),
-        "2": ("Edit description", lambda: _edit_project_description(project_update)),
+        "1": ("Edit name", lambda: _edit_project_name(project_service)),
+        "2": ("Edit description", lambda: _edit_project_description(project_service)),
         "0": ("Back", None)
     }
     
@@ -72,17 +68,17 @@ def _run_edit_project_menu(project_service: ProjectService, task_service: TaskSe
             print(f"Error: {exc}")
   
     
-def _edit_project_name(project_update: UpdateProject) -> None:
+def _edit_project_name(project_service: ProjectService) -> None:
     pid: Union[str, int] = input("Project id or name: ")
     name = input("New name: ") or None
-    proj = project_update.edit_project_name(pid, name=name)
+    proj = project_service.edit_project_name(pid, name=name)
     print(f"Updated project #{proj.id}.")
   
     
-def _edit_project_description(project_update: UpdateProject) -> None:
+def _edit_project_description(project_service: ProjectService) -> None:
     pid: Union[str, int] = input("Project id or name: ")
     description = input("New description: ")
-    proj = project_update.edit_project_description(pid, description = description)
+    proj = project_service.edit_project_description(pid, description = description)
     print(f"Updated project #{proj.id}.")
     
     
@@ -109,13 +105,13 @@ def _list_projects(project_service: ProjectService) -> None:
         print(f"- #{p.id} {p.name}: {p.description}")  
   
         
-def _run_edit_task_menu(project_service: ProjectService, task_service: TaskService, task_update: UpdateTask) -> None:
+def _run_edit_task_menu(task_service: TaskService) -> None:
     print("Edit task:")
     task_edit_actions = {
-        "1": ("Edit name", lambda: _edit_task_name(task_update)),
-        "2": ("Edit description", lambda: _edit_task_description(task_update)),
-        "3": ("Edit status[todo|doing|done]:", lambda: _change_task_status(task_update)),
-        "4": ("Edit deadline (YYYY-MM-DD):", lambda: _edit_task_deadline(task_update)),
+        "1": ("Edit name", lambda: _edit_task_name(task_service)),
+        "2": ("Edit description", lambda: _edit_task_description(task_service)),
+        "3": ("Edit status[todo|doing|done]:", lambda: _change_task_status(task_service)),
+        "4": ("Edit deadline (YYYY-MM-DD):", lambda: _edit_task_deadline(task_service)),
         "0": ("Back", None)
     }
     
@@ -139,33 +135,33 @@ def _run_edit_task_menu(project_service: ProjectService, task_service: TaskServi
             print(f"Error: {exc}")
 
 
-def _edit_task_name(task_update: UpdateTask) -> None:
+def _edit_task_name(task_service: TaskService) -> None:
     tid = int(input("Task id: "))
     name = input("New name: ") or None
-    task = task_update.edit_task_name(tid, name = name)
+    task = task_service.edit_task_name(tid, name = name)
     print(f"Updated task #{task.id}.")
     
 
-def _edit_task_description(task_update: UpdateTask) -> None:
+def _edit_task_description(task_service: TaskService) -> None:
     tid = int(input("Task id: "))
     description = input("New description: ") or None
-    task = task_update.edit_task_description(tid, description = description)
+    task = task_service.edit_task_description(tid, description = description)
     print(f"Updated task #{task.id}.")
     
     
-def _change_task_status(task_update: UpdateTask) -> None:
+def _change_task_status(task_service: TaskService) -> None:
     tid = int(input("Task id: "))
     status_in = input("New status [todo|doing|done]: ").strip()
     status = TaskStatus.from_string(status_in) if status_in else None
-    task = task_update.change_status(tid, status = status)
+    task = task_service.change_status(tid, status = status)
     print(f"Updated task #{task.id}.")
     
     
-def _edit_task_deadline(task_update: UpdateTask) -> None:
+def _edit_task_deadline(task_service: TaskService) -> None:
     tid = int(input("Task id: "))
     deadline_str = input("New deadline YYYY-MM-DD: ").strip()
     deadline = datetime.strptime(deadline_str, "%Y-%m-%d").date() if deadline_str else None
-    task = task_update.edit_task_deadline(tid, deadline = deadline)
+    task = task_service.edit_task_deadline(tid, deadline = deadline)
     print(f"Updated task #{task.id}.")
 
 
