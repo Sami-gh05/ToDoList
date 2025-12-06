@@ -42,18 +42,20 @@ class Settings:
     def load(cls) -> "Settings":
         """Load settings from environment and .env file.
 
-        Precedence: .env -> OS environment -> defaults.
+        Precedence: .env -> OS environment -> dataclass defaults.
         """
         load_dotenv()
-        MAX_PROJECTS = cls._parse_int(os.getenv("MAX_NUMBER_OF_PROJECT"), fallback = 5)
-        MAX_TASKS = cls._parse_int(os.getenv("MAX_NUMBER_OF_TASK"), fallback = 10)
-        MAX_NAME_LEN = cls._parse_int(os.getenv("MAX_NAME_LENGTH"), fallback = 30)
-        MAX_DESCRIPTION_LEN = cls._parse_int(os.getenv("MAX_DESCRIPTION_LENGTH"), fallback = 150)
+        # Use dataclass defaults as fallbacks to avoid duplication
+        MAX_PROJECTS = cls._parse_int(os.getenv("MAX_NUMBER_OF_PROJECT"), fallback=cls.MAX_PROJECTS)
+        MAX_TASKS = cls._parse_int(os.getenv("MAX_NUMBER_OF_TASK"), fallback=cls.MAX_TASKS)
+        MAX_NAME_LEN = cls._parse_int(os.getenv("MAX_NAME_LENGTH"), fallback=cls.MAX_NAME_LEN)
+        MAX_DESCRIPTION_LEN = cls._parse_int(os.getenv("MAX_DESCRIPTION_LENGTH"), fallback=cls.MAX_DESCRIPTION_LEN)
         
+        # Ensure minimum values of 1
         MAX_PROJECTS = max(1, MAX_PROJECTS)
         MAX_TASKS = max(1, MAX_TASKS)
         MAX_NAME_LEN = max(1, MAX_NAME_LEN)
         MAX_DESCRIPTION_LEN = max(1, MAX_DESCRIPTION_LEN)
-        return cls(MAX_PROJECTS = MAX_PROJECTS, MAX_TASKS = MAX_TASKS, MAX_NAME_LEN = MAX_NAME_LEN, MAX_DESCRIPTION_LEN = MAX_DESCRIPTION_LEN)
+        return cls(MAX_PROJECTS=MAX_PROJECTS, MAX_TASKS=MAX_TASKS, MAX_NAME_LEN=MAX_NAME_LEN, MAX_DESCRIPTION_LEN=MAX_DESCRIPTION_LEN)
 
 
