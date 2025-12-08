@@ -29,6 +29,13 @@ class Settings:
     
     MAX_NAME_LEN: int = 30
     MAX_DESCRIPTION_LEN: int = 150
+
+    DATABASE_URL: Optional[str] = None
+    DB_USER: Optional[str] = None
+    DB_PASS: Optional[str] = None
+    DB_HOST: Optional[str] = None
+    DB_PORT: Optional[str] = None
+    DB_NAME: Optional[str] = None
     
 
     @staticmethod
@@ -56,6 +63,15 @@ class Settings:
         MAX_TASKS = max(1, MAX_TASKS)
         MAX_NAME_LEN = max(1, MAX_NAME_LEN)
         MAX_DESCRIPTION_LEN = max(1, MAX_DESCRIPTION_LEN)
-        return cls(MAX_PROJECTS=MAX_PROJECTS, MAX_TASKS=MAX_TASKS, MAX_NAME_LEN=MAX_NAME_LEN, MAX_DESCRIPTION_LEN=MAX_DESCRIPTION_LEN)
+
+        DATABASE_URL = os.getenv("DATABASE_URL")
+        DB_USER = os.getenv("DB_USER")
+        DB_PASS = os.getenv("DB_PASS")
+        DB_HOST = os.getenv("DB_HOST")
+        DB_PORT = os.getenv("DB_PORT")
+        DB_NAME = os.getenv("DB_NAME")
+
+        return cls(MAX_PROJECTS=MAX_PROJECTS, MAX_TASKS=MAX_TASKS, MAX_NAME_LEN=MAX_NAME_LEN, MAX_DESCRIPTION_LEN=MAX_DESCRIPTION_LEN,
+                   DATABASE_URL=DATABASE_URL, DB_USER=DB_USER, DB_PASS=DB_PASS, DB_HOST=DB_HOST, DB_PORT=DB_PORT, DB_NAME=DB_NAME)
 
 
