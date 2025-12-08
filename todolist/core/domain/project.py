@@ -13,7 +13,7 @@ class Project:
     and metadata only. Cascade behaviors are handled in teh service layer.
     """
     
-    id: int
+    id: int | None = None #SQLAlchemy sets it after insert
     name: str
     description: str = ""
     

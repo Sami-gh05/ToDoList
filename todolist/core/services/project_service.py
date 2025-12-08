@@ -37,7 +37,7 @@ class ProjectService:
         existing_count: int = len(list(self.project_repo.list_all_projects()))
         if existing_count == self.settings.MAX_PROJECTS:
             raise ValueError("You have reached maximum number of projects.")
-        project = Project(id = self.project_repo.next_available_id(), name = name, description = description)
+        project = Project(name = name, description = description)
         return self.project_repo.add(project)
     
     def delete_project(self, project_identifier: Union[int, str]) -> bool:

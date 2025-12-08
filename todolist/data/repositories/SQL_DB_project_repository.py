@@ -24,14 +24,6 @@ class SQL_DB_ProjectRepository(ProjectRepository):
         """Convert domain modelk into ORM model"""
         return ProjectModel (id=domain.id, name=domain.name, description=domain.description or None)
 
-    def next_available_id(self) -> int:
-        """Get next available ID (SQLAlchemy auto-generates, but kept for interface compatibility)."""
-        # SQLAlchemy handles ID generation automatically
-        # This is kept for interface compatibility
-        result = self._session.query(ProjectModel.id).order_by(ProjectModel.id.desc()).first()
-        if result:
-            return result[0] + 1
-        return 1
 
     def add(self, project: Project) -> Project:
         orm_model = ProjectModel (
