@@ -28,6 +28,11 @@ class ProjectService:
         self.project_repo = project_repo
         self.task_rep = task_rep
         self.settings = settings
+    
+    def get_project(self, project_identifier: Union[int, str]) -> Optional[Project]:
+        if can_cast_to_int(project_identifier):
+            return self.project_repo.get_by_id(int(project_identifier))
+        return self.project_repo.get_by_name(project_identifier)
         
     def create_project(self, name: str, description: str = "") -> Project:
         if can_cast_to_int(name):

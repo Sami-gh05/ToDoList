@@ -1,6 +1,6 @@
-# ToDoList CLI Application - Phase 2 (PostgreSQL Backend)
+# ToDoList Application - CLI + FastAPI (PostgreSQL Backend)
 
-A command-line task management application built with Python, featuring a clean architecture with PostgreSQL database persistence. This project demonstrates software engineering principles including domain-driven design, repository pattern, separation of concerns, and database migrations.
+A task management application with both a command-line menu and a FastAPI REST API, built with Python and PostgreSQL. The project demonstrates software engineering principles including domain-driven design, repository pattern, separation of concerns, and database migrations.
 
 ## 🚀 Features
 
@@ -118,9 +118,14 @@ todolist/
    ```
 
 5. **Run the application** (migrations apply automatically on startup)
-   ```bash
-   poetry run todolist
-   ```
+   - CLI (interactive menu):
+     ```bash
+     poetry run python -m todolist.main
+     ```
+   - API (FastAPI + Uvicorn):
+     ```bash
+     poetry run uvicorn todolist.api.main:app --reload --host 0.0.0.0 --port 8000
+     ```
 
 ### Database Migrations
 
@@ -142,17 +147,18 @@ alembic downgrade -1
 
 ## 🎮 Usage
 
-### Starting the Application
+### Option A: CLI (Phase 2 experience)
+Run:
 ```bash
-poetry run todolist
+poetry run python -m todolist.main
 ```
 
-The application will:
+The CLI will:
 1. Apply any pending database migrations
 2. Start the background scheduler
-3. Display the interactive CLI menu
+3. Display the interactive menu
 
-### Main Menu Options
+Main Menu Options
 ```
 ToDoList CLI (Phase 2 - PostgreSQL Backend)
 
@@ -168,7 +174,7 @@ Choose an action:
   0. Exit
 ```
 
-### Example Workflow
+Example Workflow
 
 1. **Create a Project**
    - Select option 1
@@ -197,6 +203,45 @@ Choose an action:
    - Scheduler runs periodically in background
    - Incomplete tasks with past deadlines are automatically marked DONE
    - `closed_at` timestamp is recorded
+
+### Option B: REST API (FastAPI - Phase 3)
+Run:
+```bash
+poetry run uvicorn todolist.api.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Explore:
+- Docs (Swagger): `http://localhost:8000/docs`
+- Docs (ReDoc): `http://localhost:8000/redoc`
+- Health check: `http://localhost:8000/health`
+
+Quick examples (replace values as needed):
+- Create project
+  ```bash
+  curl -X POST http://localhost:8000/projects/ \
+    -H "Content-Type: application/json" \
+    -d '{"name":"Web Dev","description":"Personal site"}'
+  ```
+- List projects
+  ```bash
+  curl http://localhost:8000/projects/
+  ```
+- Create task (project can be id or name)
+  ```bash
+  curl -X POST http://localhost:8000/tasks/ \
+    -H "Content-Type: application/json" \
+    -d '{"project_id":"Web Dev","name":"Design homepage","description":"Wireframes","status":"TODO","deadline":"2025-02-15"}'
+  ```
+- Update task
+  ```bash
+  curl -X PATCH http://localhost:8000/tasks/1 \
+    -H "Content-Type: application/json" \
+    -d '{"status":"DONE","description":"Finished"}'
+  ```
+- Delete task
+  ```bash
+  curl -X DELETE http://localhost:8000/tasks/1
+  ```
 
 ## ⚙️ Configuration
 
@@ -291,4 +336,4 @@ This project is part of a Software Engineering course and is intended for educat
 
 ---
 
-**Note**: This is Phase 2 of the ToDoList application, featuring PostgreSQL persistence and automated migrations. The application automatically manages database schema through Alembic and includes a background scheduler for automatic task management.
+**Note**: Current release is Phase 3: the FastAPI REST API served via Uvicorn, sharing the same PostgreSQL database, migrations, and business logic as the CLI. Phase 2 introduced the PostgreSQL-backed CLI with scheduler; that flow still works alongside the API.
