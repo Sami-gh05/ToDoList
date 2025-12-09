@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Enum, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Enum, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
 from todolist.data.db.sql_db_base import Base
@@ -18,6 +18,7 @@ class TaskModel(Base):
     description = Column(String(settings.MAX_DESCRIPTION_LEN), nullable=True)
     status = Column(Enum(TaskStatus), nullable=False, default=TaskStatus.TODO)
     deadline = Column(Date, nullable=True)
+    closed_at = Column(DateTime, nullable=True)
 
     project = relationship("ProjectModel", back_populates="tasks")
 

@@ -95,6 +95,13 @@ class TaskService:
             raise ValueError("No Task found.")            
         task.deadline = deadline           
         return self.task_repo.update(task)
+    
+    def _edit_task_closed_at(self, task_id: int, *, closed_at: Optional[date]) -> Task:
+        task: Task = self.task_repo.get_by_id(task_id)
+        if task is None:
+            raise ValueError("No Task found.")            
+        task.closed_at = closed_at           
+        return self.task_repo.update(task)
         
     def change_status(self, task_id: int, status: TaskStatus) -> Task:
         task: Task = self.task_repo.get_by_id(task_id)
@@ -102,4 +109,5 @@ class TaskService:
             raise ValueError("No Task found.")            
         task.status = status
         return self.task_repo.update(task)
+    
         

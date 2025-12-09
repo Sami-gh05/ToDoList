@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import List
 
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from todolist.core.domain.task import Task
 from todolist.core.repositories.task_repository import TaskRepository
@@ -23,19 +22,21 @@ class SQL_DB_TaskRepository(TaskRepository):
             name=orm_model.name,
             description=orm_model.description or "",
             status=orm_model.status,
-            deadline=orm_model.deadline or None
+            deadline=orm_model.deadline or None,
+            closed_at=orm_model.closed_at or None
         )
-        
+    
     @staticmethod
     def _from_domain(domain: Task) -> TaskModel:
         """Convert domain model into ORM model."""
         return TaskModel(
-            id=domain.id or None,  # SQLAlchemy will set this after insert
+            id=domain.id or None,
             project_id=domain.project_id,
             name=domain.name,
             description=domain.description or None,
             status=domain.status,
-            deadline=domain.deadline or None
+            deadline=domain.deadline or None,
+            closed_at=domain.closed_at or None
         )
         
     def add(self, task: Task) -> Task:
@@ -86,6 +87,12 @@ class SQL_DB_TaskRepository(TaskRepository):
         orm_model.description = task.description or None
         orm_model.status = task.status
         orm_model.deadline = task.deadline or None
+        orm_model.closed_at = task.closed_at or None
         
         self._session.commit()
         return self._to_domain(orm_model)
+    
+    def list_all_tasks(self) -> List[Task]:
+        """List all tasks in the repository."""
+        orm_models: List[TaskModel] = self._session.query(TaskModel).all()
+        return [self._to_domain(orm_model) for orm_model in orm_models]
