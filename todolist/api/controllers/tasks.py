@@ -30,6 +30,22 @@ def list_tasks(
     )
     return TaskListResponse(items=tasks, total=total, skip=skip, limit=limit)
 
+@router.get("/project/{project_identifier}", response_model=TaskListResponse, summary="List tasks for a project")
+def list_tasks_by_project(
+    project_identifier: str,
+    task_service: TaskService = Depends(get_task_service),
+) -> TaskListResponse:
+    try:
+        tasks = list(task_service.list_tasks_by_project(project_identifier))
+    except ValueError as exc:
+        message = str(exc)
+        code = status.HTTP_404_NOT_FOUND if "not found" in message.lower() else status.HTTP_400_BAD_REQUEST
+        raise HTTPException(status_code=code, detail=message) from exc
+
+    total = len(tasks)
+    return TaskListResponse(items=tasks, total=total, skip=0, limit=total)
+
+
 
 @router.get("/{task_id}", response_model=TaskResponse, summary="Get a task by id")
 def get_task(task_id: int, task_service: TaskService = Depends(get_task_service)) -> TaskResponse:
