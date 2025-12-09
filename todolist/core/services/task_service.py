@@ -47,7 +47,6 @@ class TaskService:
             raise ValueError("You have reached maximum number of tasks per project.")
         
         task = Task(
-            id = self.task_repo.next_available_id(),
             project_id = project.id,
             name = name,
             description = description,

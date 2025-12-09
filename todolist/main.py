@@ -4,8 +4,6 @@ Wires configuration, repositories, services, and starts a minimal CLI menu.
 """
 from __future__ import annotations
 
-import os
-
 from todolist.cli.menu import run_menu
 from todolist.config.settings import Settings
 from todolist.data.db.session import get_session_factory
