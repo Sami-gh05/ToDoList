@@ -3,8 +3,9 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from typing import Optional
 
 from todolist.config.settings import Settings
+from todolist.data.db.sql_db_base import Base
 
-Base = declarative_base()
+metadata = Base.metadata
 
 def get_engine(database_url: Optional[str]) -> Engine:
     """Get a SQLAlchemy engine for the given database URL."""
@@ -23,5 +24,4 @@ def get_engine(database_url: Optional[str]) -> Engine:
 def get_session_factory(database_url: Optional[str]) -> sessionmaker:
     """Get a SQLAlchemy session factory for the given database URL."""
     engine = get_engine(database_url)
-    Base.metadata.create_all(engine)
     return sessionmaker(bind=engine)

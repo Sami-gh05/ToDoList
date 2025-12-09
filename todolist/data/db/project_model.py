@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from todolist.data.db.session import Base
+from todolist.data.db.sql_db_base import Base
 
 from todolist.config.settings import Settings
 
