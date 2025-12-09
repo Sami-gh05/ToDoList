@@ -11,7 +11,7 @@ from todolist.data.db.task_model import TaskModel
 
 class SQL_DB_TaskRepository(TaskRepository):
     """SQL Database implementation of task repository"""
-    def __inti__(self, session: Session) -> None:
+    def __init__(self, session: Session) -> None:
         self._session = session
         
     @staticmethod

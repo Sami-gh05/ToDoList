@@ -9,10 +9,6 @@ class TaskRepository(ABC):
     "Abstract methods for tasks' repository"
     
     @abstractmethod
-    def next_available_id(self) -> int:
-        raise NotImplementedError
-    
-    @abstractmethod
     def add(self, task: Task) -> Task:
         raise NotImplementedError
     

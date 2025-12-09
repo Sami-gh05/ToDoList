@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import List
 
-from sqlalchemy import desc
-
 from todolist.core.domain.project import Project
 from todolist.core.repositories.project_repository import ProjectRepository
 from todolist.data.db.project_model import ProjectModel

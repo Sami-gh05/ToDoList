@@ -15,9 +15,9 @@ class Task:
     This class only contains the meta info and business logic, and otehr 
     parts are handled in repository and service layer."""
     
-    id: int | None = None #SQLAlchemy sets it after insert
     project_id: int
     name: str
+    id: int | None = None #SQLAlchemy sets it after insert
     description: str = ""
     status: TaskStatus = field(default = TaskStatus.TODO)
     deadline: Optional[date] = None

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from todolist.data.db.sql_db_base import Base
+from todolist.data.db.session import Base
 
 from todolist.config.settings import Settings
 
@@ -14,7 +14,7 @@ class ProjectModel(Base):
     name = Column(String(settings.MAX_NAME_LEN), nullable=False)
     description = Column(String(settings.MAX_DESCRIPTION_LEN), nullable=True)
 
-    tasks = relationship("TaskModel", back_populates="project")
+    tasks = relationship("TaskModel", back_populates="project", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"Project(id={self.id}, name={self.name}, description={self.description})"
@@ -24,3 +24,4 @@ class ProjectModel(Base):
 
     def __eq__(self, other):
         return self.id == other.id
+        

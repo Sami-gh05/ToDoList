@@ -13,9 +13,10 @@ class Project:
     and metadata only. Cascade behaviors are handled in teh service layer.
     """
     
-    id: int | None = None #SQLAlchemy sets it after insert
     name: str
     description: str = ""
+    id: int | None = None #SQLAlchemy sets it after insert
+
     
     def __post_init__(self):
         """Auto-validate after construction"""
