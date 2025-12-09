@@ -203,6 +203,7 @@ def _list_tasks(task_service: TaskService) -> None:
     print("Tasks:")
     for t in tasks:
         deadline = t.deadline.isoformat() if t.deadline else "-"
-        print(f"- #{t.id} {t.name}: {t.description} [{t.status.value}] due {deadline}")
+        closedAt = t.closed_at.isoformat() if t.closed_at else "-"
+        print(f"- #{t.id} {t.name}: {t.description} [{t.status.value}] due {deadline} closed at {closedAt}")
 
 

@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 from datetime import datetime, date
 from typing import Optional
 
-from todolist.core.domain.project import Project
 from todolist.core.domain.status import TaskStatus
 from todolist.config.settings import Settings
 
@@ -15,12 +14,13 @@ class Task:
     This class only contains the meta info and business logic, and otehr 
     parts are handled in repository and service layer."""
     
-    id: int
     project_id: int
     name: str
+    id: int | None = None #SQLAlchemy sets it after insert
     description: str = ""
     status: TaskStatus = field(default = TaskStatus.TODO)
     deadline: Optional[date] = None
+    closed_at: Optional[datetime] = None
     
     def __post_init__(self):
         # validate the Task object right after being created

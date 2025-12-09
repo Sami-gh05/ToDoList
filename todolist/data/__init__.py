@@ -1,3 +1,3 @@
-"""Data layer with in-memory repository implementations (Phase 1)."""
+"""Data layer with SQL based repository implementations (Phase 2)."""
 
 

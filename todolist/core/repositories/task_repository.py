@@ -9,10 +9,6 @@ class TaskRepository(ABC):
     "Abstract methods for tasks' repository"
     
     @abstractmethod
-    def next_available_id(self) -> int:
-        raise NotImplementedError
-    
-    @abstractmethod
     def add(self, task: Task) -> Task:
         raise NotImplementedError
     
@@ -36,4 +32,9 @@ class TaskRepository(ABC):
     
     @abstractmethod
     def update(self, task: Task) -> Task:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def list_all_tasks(self) -> Iterable[Task]:
+        """List all tasks in the repository"""
         raise NotImplementedError

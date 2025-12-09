@@ -9,10 +9,6 @@ class ProjectRepository(ABC):
     """Abstract repository for projects"""
     
     @abstractmethod
-    def next_available_id(self) -> int:
-        raise NotImplementedError
-    
-    @abstractmethod
     def add(self, project: Project) -> Project:
         raise NotImplementedError
     
